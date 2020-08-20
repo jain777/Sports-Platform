@@ -24,7 +24,7 @@ export const setChatGroups = () => {
 
       for (let key in respData) {
         if (respData[key].users.some((user) => user === userId)) {
-          userGroups.push(respData[key]);
+          userGroups.push({ id: key, ...respData[key] });
         }
       }
 
@@ -63,10 +63,12 @@ export const createChatGroup = (groupName) => {
     );
 
     const respData = await response.json();
+    // console.log(respData);
 
     dispatch({
       type: ADD_CHAT_GROUP,
       chatGroupData: {
+        id: respData.name,
         admin: userId,
         groupName,
         users: [userId],
@@ -93,8 +95,10 @@ export const joinChatGroup = (groupId) => {
     let chatUsers = [];
     let admin = null;
     let groupName = null;
+    let key = null;
     for (let key in respData) {
       if (key === groupId) {
+        key = key;
         chatUsers = respData[key].users;
         admin = respData[key].admin;
         groupName = respData[key].groupName;
@@ -127,6 +131,7 @@ export const joinChatGroup = (groupId) => {
     dispatch({
       type: JOIN_CHAT_GROUP,
       chatGroupData: {
+        id: key,
         users: newUsers,
         admin: admin,
         groupName: groupName,

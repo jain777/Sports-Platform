@@ -70,6 +70,7 @@ const ChatRoomListScreen = (props) => {
             onPress={() => {
               props.navigation.navigate("ChatScreen", {
                 groupName: itemData.item.groupName,
+                groupId: itemData.item.id,
               });
             }}
           />
@@ -95,12 +96,26 @@ ChatRoomListScreen.navigationOptions = (navData) => {
         </HeaderButtons>
       );
     },
+    headerLeft: () => {
+      return (
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Menu"
+            iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
+            onPress={() => {
+              navData.navigation.toggleDrawer();
+            }}
+          />
+        </HeaderButtons>
+      );
+    },
   };
 };
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    width: "100%",
   },
   centred: {
     flex: 1,

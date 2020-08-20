@@ -1,22 +1,22 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableNativeFeedback } from "react-native";
 import Colors from "../../constants/Color";
 
 const ChatGroupItem = (props) => {
   return (
-    <TouchableOpacity onPress={props.onPress} style={{flex:1}}>
+    <TouchableNativeFeedback onPress={props.onPress} style={{flex:1}}>
         <View style={styles.card}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{props.title}</Text>
       </View>
       <View style={styles.peopleContainer}>
         <Text style={styles.people}>
-          <Text style={styles.number}>{props.people}</Text>{" "}
+          <Text style={styles.number}>{props.people}</Text>{"    "}
           {props.people > 1 ? "Members" : "Member"}
         </Text>
       </View>
       </View>
-    </TouchableOpacity>
+    </TouchableNativeFeedback>
   );
 };
 
@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     height: 200,
     alignItems: "center",
     flexDirection: "column",
-    margin: 40,
+    margin: 30,
   },
   titleContainer: {
     height: 120,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#abcaae",
+    backgroundColor: "#ff1f48",
   },
   title: {
     fontSize: 25,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   number: {
-    fontSize: 15,
+    fontSize: 23,
     color: Colors.primary,
   },
 });
