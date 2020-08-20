@@ -9,6 +9,12 @@ const ChatScreen = (props) => {
   );
 };
 
+ChatScreen.navigationOptions = (navData) => {
+  return {
+    headerTitle: navData.navigation.getParam("groupName"),
+  };
+};
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

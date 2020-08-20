@@ -1,20 +1,28 @@
-import {ADD_CHAT_GROUP, SET_CHAT_GROUPS} from "../actions/chatlist";
+import {
+  ADD_CHAT_GROUP,
+  SET_CHAT_GROUPS,
+  JOIN_CHAT_GROUP,
+} from "../actions/chatlist";
 
 const initialState = {
-    chatGroupList : []
-  };
+  chatGroupList: [],
+};
 
-  export default (state = initialState, action) => {
-    switch (action.type) {
-      case SET_CHAT_GROUPS:
-          return {
-              chatGroupList:action.chatGroups,
-          }
-      case ADD_CHAT_GROUP:
-        return {
-          chatGroupList: state.chatGroupList.concat(action.chatGroup),
-        };
-      default:
-        return state;
-    }
-  };
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case SET_CHAT_GROUPS:
+      return {
+        chatGroupList: action.chatGroupList,
+      };
+    case ADD_CHAT_GROUP:
+      return {
+        chatGroupList: state.chatGroupList.concat(action.chatGroupData),
+      };
+    case JOIN_CHAT_GROUP:
+      return {
+        chatGroupList: state.chatGroupList.concat(action.chatGroupData),
+      };
+    default:
+      return state;
+  }
+};

@@ -1,5 +1,6 @@
 export const ADD_CHAT_GROUP = "ADD_CHAT_GROUP";
 export const SET_CHAT_GROUPS = "SET_CHAT_GROUPS";
+export const JOIN_CHAT_GROUP = "JOIN_CHAT_GROUP";
 
 export const setChatGroups = () => {
   return async (dispatch, getState) => {
@@ -10,31 +11,31 @@ export const setChatGroups = () => {
       const response = await fetch(
         `https://sports-app-28cb3.firebaseio.com/chatGroups.json?auth=${token}`
       );
+      // console.log(response);
 
       if (!response.ok) {
+        // console.log(response);
+
         throw new Error("Something Went Wrong!");
       }
       const respData = await response.json();
       // console.log(respData);
-      const loadedGroups = [];
+      const userGroups = [];
 
-      // for (key in respData) {
-      //   let newProd = new Product(
-      //     key,
-      //     respData[key].ownerId,
-      //     respData[key].title,
-      //     respData[key].imageUrl,
-      //     respData[key].description,
-      //     respData[key].price
-      //   );
-      //   loadedProducts.push(newProd);
-      // }
+      for (let key in respData) {
+        if (respData[key].users.some((user) => user === userId)) {
+          userGroups.push(respData[key]);
+        }
+      }
+
+      // console.log(userGroups);
 
       dispatch({
         type: SET_CHAT_GROUPS,
-        chatGroupList: loadedGroups,
+        chatGroupList: userGroups,
       });
     } catch (err) {
+      console.log(err);
       //send to custom analytics server
       throw err;
     }
@@ -65,7 +66,71 @@ export const createChatGroup = (groupName) => {
 
     dispatch({
       type: ADD_CHAT_GROUP,
-      chatGroupData: {},
+      chatGroupData: {
+        admin: userId,
+        groupName,
+        users: [userId],
+      },
+    });
+  };
+};
+export const joinChatGroup = (groupId) => {
+  return async (dispatch, getState) => {
+    //any async code you went!
+
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups.json?auth=${token}`
+    );
+    if (!response.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const respData = await response.json();
+    // console.log(respData);
+
+    let chatUsers = [];
+    let admin = null;
+    let groupName = null;
+    for (let key in respData) {
+      if (key === groupId) {
+        chatUsers = respData[key].users;
+        admin = respData[key].admin;
+        groupName = respData[key].groupName;
+      }
+    }
+    // console.log(chatUsers);
+
+    const newUsers = chatUsers.concat(userId);
+    // console.log(newUsers);
+    const newResponse = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups/${groupId}.json?auth=${token}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          users: newUsers,
+        }),
+      }
+    );
+
+    if (!newResponse.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const newRespData = await newResponse.json();
+    console.log(newRespData);
+
+    dispatch({
+      type: JOIN_CHAT_GROUP,
+      chatGroupData: {
+        users: newUsers,
+        admin: admin,
+        groupName: groupName,
+      },
     });
   };
 };

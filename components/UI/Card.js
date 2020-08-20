@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 10,
     backgroundColor: 'white'
-  }
+  },  
 });
 
 export default Card;
