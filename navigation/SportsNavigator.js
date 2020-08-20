@@ -4,6 +4,7 @@ import Colors from "../constants/Color";
 import LoginScreen from "../screens/LoginScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ChatRoomList from "../screens/ChatRoomList";
+import NewChatScreen from "../screens/NewChatScreen";
 
 const defaultNavOptions = {
   headerStyle: {
@@ -16,6 +17,15 @@ const SportsNavigator = createStackNavigator(
   {
     ChatRoomList: ChatRoomList,
     ChatScreen: ChatScreen,
+    NewChat: NewChatScreen,
+  },
+  {
+    defaultNavigationOptions: defaultNavOptions,
+  }
+);
+const AuthNavigator = createStackNavigator(
+  {
+    Login: LoginScreen,
   },
   {
     defaultNavigationOptions: defaultNavOptions,
@@ -23,7 +33,7 @@ const SportsNavigator = createStackNavigator(
 );
 
 const MainNavigator = createSwitchNavigator({
-  Auth: LoginScreen,
+  Auth: AuthNavigator,
   Chat: SportsNavigator,
 });
 
