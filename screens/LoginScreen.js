@@ -63,6 +63,10 @@ const AuthScreen = (props) => {
   }, [error]);
 
   const authHandler = async () => {
+    if (!formState.formIsValid) {
+      setError("Invalid Input!");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -100,9 +104,7 @@ const AuthScreen = (props) => {
     [dispatchFormState]
   );
   return (
-    <KeyboardAvoidingView
-      style={styles.screen}
-    >
+    <KeyboardAvoidingView style={styles.screen}>
       <View style={styles.gradient}>
         <Card style={styles.authContainer}>
           <ScrollView>
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: '#f2e124',
+    backgroundColor: "#f2e124",
   },
   buttonContainer: {
     marginTop: 10,

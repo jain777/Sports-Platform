@@ -60,7 +60,7 @@ export const createChatGroup = (groupName) => {
         },
         body: JSON.stringify({
           admin: userId,
-          groupName: groupName,
+          groupName: groupName.trim() === "" ? "A Group" : groupName,
           users: [userId],
         }),
       }
@@ -69,12 +69,44 @@ export const createChatGroup = (groupName) => {
     const respData = await response.json();
     // console.log(respData);
 
+    const newResponse = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups/${respData.name}.json?auth=${token}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chats: [
+            [
+              {
+                _id: 1,
+                text: "Welcome to the group",
+                createdAt: new Date(),
+                user: {
+                  _id: 2,
+                  name: "Sports App Team",
+                },
+              },
+            ],
+          ],
+        }),
+      }
+    );
+
+    if (!newResponse.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const newRespData = await newResponse.json();
+    // console.log(respData);
+
     dispatch({
       type: ADD_CHAT_GROUP,
       chatGroupData: {
         id: respData.name,
         admin: userId,
-        groupName,
+        groupName: groupName.trim() === "" ? "A Group" : groupName,
         isAdmin: true,
         users: [userId],
       },
@@ -101,8 +133,10 @@ export const joinChatGroup = (groupId) => {
     let admin = null;
     let groupName = null;
     let key = null;
+    let groupExists = false;
     for (let key in respData) {
       if (key === groupId) {
+        groupExists = true;
         key = key;
         chatUsers = respData[key].users;
         admin = respData[key].admin;
@@ -110,6 +144,10 @@ export const joinChatGroup = (groupId) => {
       }
     }
     // console.log(chatUsers);
+
+    if (!groupExists) {
+      throw new Error("Incorrect Group ID");
+    }
 
     const newUsers = chatUsers.concat(userId);
     // console.log(newUsers);

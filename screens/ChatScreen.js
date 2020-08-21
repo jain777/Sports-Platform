@@ -22,14 +22,17 @@ const ChatScreen = (props) => {
   const chats = useSelector(
     (state) =>
       state.chatList.chatGroupList.filter(
-        (chatGroup) =>
-          chatGroup.groupId === props.navigation.getParam("groupId")
+        (chatGroup) => chatGroup.id === props.navigation.getParam("groupId")
       )[0]["chats"]
   );
+
   let transformedChats = [];
+
   chats.map((chat) => transformedChats.push(chat[0]));
   transformedChats = transformedChats.reverse();
+
   const userId = useSelector((state) => state.auth.userId);
+  const username = useSelector((state) => state.auth.username);
   const [messages, setMessages] = useState([]);
   useEffect(() => {
     setMessages(transformedChats);
@@ -65,7 +68,7 @@ const ChatScreen = (props) => {
         onSend={(messages) => onSend(messages)}
         user={{
           _id: userId,
-          avatar: "https://placeimg.com/140/140/any",
+          name: username,
         }}
       />
     </View>

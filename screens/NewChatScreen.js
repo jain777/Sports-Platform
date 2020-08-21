@@ -15,6 +15,7 @@ const NewChatScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [nameValidity, setNameValidity] = useState(false);
+  const [groupIdValidity, setgroupIdValidity] = useState(false);
   const [isJoin, setIsJoin] = useState(false);
   const [groupId, setGroupId] = useState("");
   const [error, setError] = useState();
@@ -25,15 +26,21 @@ const NewChatScreen = (props) => {
     }
   }, [error]);
   const submitHandler = useCallback(async () => {
-    // if (!isJoin) {
-    //   if (!nameValidity) {
-    //     Alert.alert("Wrong input!", "Please check the errors in the form.", [
-    //       { text: "Okay" },
-    //     ]);
-    //     return;
-    //   }
-    // }
-    // console.log("Built");
+    if (!isJoin) {
+      if (!nameValidity) {
+        Alert.alert("Wrong input!", "Please check the errors in the form.", [
+          { text: "Okay" },
+        ]);
+        return;
+      }
+    } else {
+      if (!groupIdValidity) {
+        Alert.alert("Wrong input!", "Please check the errors in the form.", [
+          { text: "Okay" },
+        ]);
+        return;
+      }
+    }
 
     setError(null);
     setIsLoading(true);
@@ -48,17 +55,27 @@ const NewChatScreen = (props) => {
       setError(err.message);
     }
     setIsLoading(false);
-  }, [isJoin, setError, setIsLoading, name, groupId]);
+  }, [
+    isJoin,
+    setError,
+    setIsLoading,
+    name,
+    groupId,
+    groupIdValidity,
+    nameValidity,
+    dispatch,
+  ]);
   const inputChangeHandler = useCallback(
-    (inputIdentifier, inputValue, inputValidity) => {
+    (_, inputValue, inputValidity) => {
       setName(inputValue);
       setNameValidity(inputValidity);
     },
     [setNameValidity, setName]
   );
   const groupIdChangedHandler = useCallback(
-    (inputIdentifier, inputValue, inputValidity) => {
+    (_, inputValue, inputValidity) => {
       setGroupId(inputValue);
+      setgroupIdValidity(inputValidity);
     },
     [setGroupId]
   );
@@ -83,6 +100,7 @@ const NewChatScreen = (props) => {
               onInputChange={groupIdChangedHandler}
               initialValue={""}
               initiallyValid={true}
+              minLength={7}
             />
           </View>
         ) : (
@@ -96,6 +114,7 @@ const NewChatScreen = (props) => {
               onInputChange={inputChangeHandler}
               initialValue={""}
               initiallyValid={false}
+              minLength={5}
             />
           </View>
         )}
