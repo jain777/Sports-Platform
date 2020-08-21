@@ -73,7 +73,7 @@ const AuthScreen = (props) => {
             formState.inputValues.password
           )
         );
-        props.navigation.navigate("Chat");
+        props.navigation.navigate("Username");
       } else {
         await dispatch(
           authActions.login(

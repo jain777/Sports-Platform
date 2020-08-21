@@ -24,7 +24,11 @@ export const setChatGroups = () => {
 
       for (let key in respData) {
         if (respData[key].users.some((user) => user === userId)) {
-          userGroups.push({ id: key, ...respData[key] });
+          userGroups.push({
+            isAdmin: respData[key].admin === userId,
+            id: key,
+            ...respData[key],
+          });
         }
       }
 
@@ -71,6 +75,7 @@ export const createChatGroup = (groupName) => {
         id: respData.name,
         admin: userId,
         groupName,
+        isAdmin: true,
         users: [userId],
       },
     });
@@ -135,6 +140,7 @@ export const joinChatGroup = (groupId) => {
         users: newUsers,
         admin: admin,
         groupName: groupName,
+        isAdmin: false,
       },
     });
   };

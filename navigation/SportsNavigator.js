@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ChatRoomList from "../screens/ChatRoomList";
 import NewChatScreen from "../screens/NewChatScreen";
+import UsernameScreen from "../screens/UsernameScreen";
 import React from "react";
 import { Platform, SafeAreaView, Button, View } from "react-native";
 import { logout } from "../store/actions/auth";
@@ -59,6 +60,7 @@ const DrawerNavigator = createDrawerNavigator(
 const AuthNavigator = createStackNavigator(
   {
     Login: LoginScreen,
+    Username: UsernameScreen,
   },
   {
     defaultNavigationOptions: defaultNavOptions,

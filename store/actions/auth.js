@@ -1,5 +1,6 @@
 export const AUTHENTICATE = "AUTHENTICATE";
 export const LOGOUT = "LOGOUT";
+export const SET_USERNAME = "SET_USERNAME";
 
 export const authenticate = (userId, token, expiryTime) => {
   return (dispatch) => {
@@ -87,6 +88,16 @@ export const login = (email, password) => {
 
     const respData = await response.json();
     // console.log(respData);
+    const newResponse = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/users.json?auth=${respData.idToken}`
+    );
+    const newRespData = await newResponse.json();
+    let username = null;
+    for (key in newRespData) {
+      if (newRespData[key].userId === respData.localId) {
+        username = newRespData[key].username;
+      }
+    }
 
     dispatch(
       authenticate(
@@ -95,6 +106,10 @@ export const login = (email, password) => {
         parseInt(respData.expiresIn) * 1000
       )
     );
+    dispatch({
+      type: SET_USERNAME,
+      username: username,
+    });
   };
 };
 
@@ -116,5 +131,39 @@ const setLogoutTimer = (expirationTime) => {
     timer = setTimeout(() => {
       dispatch(logout());
     }, expirationTime);
+  };
+};
+
+export const setUsername = (username) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/users.json?auth=${token}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          userId: userId,
+        }),
+      }
+    );
+
+    // console.log(response);
+
+    if (!response.ok) {
+      throw new Error("Something Went Wrong");
+    }
+
+    const respData = await response.json();
+    console.log(respData);
+
+    dispatch({
+      type: SET_USERNAME,
+      username: username,
+    });
   };
 };

@@ -4,17 +4,19 @@ import Colors from "../../constants/Color";
 
 const ChatGroupItem = (props) => {
   return (
-    <TouchableNativeFeedback onPress={props.onPress} style={{flex:1}}>
-        <View style={styles.card}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{props.title}</Text>
-      </View>
-      <View style={styles.peopleContainer}>
-        <Text style={styles.people}>
-          <Text style={styles.number}>{props.people}</Text>{"    "}
-          {props.people > 1 ? "Members" : "Member"}
-        </Text>
-      </View>
+    <TouchableNativeFeedback onPress={props.onPress} style={{ flex: 1 }}>
+      <View style={styles.card}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{props.title}</Text>
+        </View>
+        <View style={styles.peopleContainer}>
+          <Text style={styles.people}>
+            <Text style={styles.number}>{props.people}</Text>
+            {"    "}
+            {props.people > 1 ? "Members" : "Member"}
+          </Text>
+          {props.isAdmin ? <Text style={styles.admin}>Admin</Text> : null}
+        </View>
       </View>
     </TouchableNativeFeedback>
   );
@@ -47,7 +49,9 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#eee"
+    backgroundColor: "#eee",
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
   },
   people: {
     fontSize: 15,
@@ -55,6 +59,10 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 23,
     color: Colors.primary,
+  },
+  admin: {
+    fontSize: 14,
+    color: Colors.accent,
   },
 });
 

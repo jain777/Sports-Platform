@@ -16,6 +16,7 @@ import ChatGroupItem from "../components/UI/chatGroupItem";
 
 const ChatRoomListScreen = (props) => {
   const userChatGroups = useSelector((state) => state.chatList.chatGroupList);
+  const username = useSelector((state) => state.auth.username);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
@@ -59,6 +60,12 @@ const ChatRoomListScreen = (props) => {
   }
   return (
     <View style={styles.screen}>
+      <View style={styles.idContainer}>
+        <Text style={styles.idText}>
+          WELCOME{"   "}
+          <Text style={styles.id}>{username}</Text>
+        </Text>
+      </View>
       <FlatList
         style={{ flex: 1 }}
         data={userChatGroups}
@@ -67,6 +74,7 @@ const ChatRoomListScreen = (props) => {
           <ChatGroupItem
             title={itemData.item.groupName}
             people={itemData.item.users.length}
+            isAdmin={itemData.item.isAdmin}
             onPress={() => {
               props.navigation.navigate("ChatScreen", {
                 groupName: itemData.item.groupName,
@@ -121,6 +129,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  idContainer: {
+    top: 0,
+    padding: 10,
+    alignItems: "center",
+    backgroundColor: "#35733e",
+  },
+  idText: {
+    color: "#f2f26f",
+    fontSize: 18,
+  },
+  id: {
+    color: "#cdd4d3",
+    fontSize: 20,
   },
 });
 
