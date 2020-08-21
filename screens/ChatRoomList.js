@@ -19,16 +19,17 @@ const ChatRoomListScreen = (props) => {
   const username = useSelector((state) => state.auth.username);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState();
   const loadGroups = useCallback(async () => {
-    // setIsRefreshing(true);
+    setIsRefreshing(true);
     setError(null);
     try {
       await dispatch(chatlistActions.setChatGroups());
     } catch (err) {
       setError(err.message);
     }
-    // setIsRefreshing(false);
+    setIsRefreshing(false);
   }, [dispatch, setError]);
   useEffect(() => {
     setIsLoading(true);
@@ -58,15 +59,25 @@ const ChatRoomListScreen = (props) => {
       </View>
     );
   }
+  if (!isLoading && userChatGroups.length === 0) {
+    return (
+      <View style={styles.centred}>
+        <Text>No Groups Found. Maybe Start Joining or Creating Some!</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.screen}>
       <View style={styles.idContainer}>
         <Text style={styles.idText}>
           WELCOME{"   "}
+          {/* -MFEslyJyG_TeSPj-Jqe */}
           <Text style={styles.id}>{username}</Text>
         </Text>
       </View>
       <FlatList
+        onRefresh={loadGroups}
+        refreshing={isRefreshing}
         style={{ flex: 1 }}
         data={userChatGroups}
         keyExtractor={(item) => item.groupName}

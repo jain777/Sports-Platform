@@ -39,8 +39,8 @@ const UsernameScreen = (props) => {
       props.navigation.navigate("Chat");
     } catch (err) {
       setError(err.message);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, [setError, setIsLoading, name]);
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {

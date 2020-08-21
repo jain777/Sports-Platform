@@ -33,7 +33,7 @@ const NewChatScreen = (props) => {
     //     return;
     //   }
     // }
-    console.log("Built");
+    // console.log("Built");
 
     setError(null);
     setIsLoading(true);

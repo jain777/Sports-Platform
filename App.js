@@ -16,7 +16,7 @@ const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 export default function App() {
   return (
     <Provider store={store}>
-      <NavContainer/>
+      <NavContainer />
     </Provider>
   );
 }
