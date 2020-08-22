@@ -1,6 +1,7 @@
 export const ADD_CHAT_GROUP = "ADD_CHAT_GROUP";
 export const SET_CHAT_GROUPS = "SET_CHAT_GROUPS";
 export const JOIN_CHAT_GROUP = "JOIN_CHAT_GROUP";
+export const DELETE_CHAT_GROUP = "DELETE_CHAT_GROUP";
 
 export const setChatGroups = () => {
   return async (dispatch, getState) => {
@@ -180,6 +181,31 @@ export const joinChatGroup = (groupId) => {
         groupName: groupName,
         isAdmin: false,
       },
+    });
+  };
+};
+
+export const deleteChatGroup = (groupId) => {
+  return async (dispatch, getState) => {
+    //any async code you went!
+
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups/${groupId}.json?auth=${token}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const respData = await response.json();
+    // console.log(respData);
+    dispatch({
+      type: DELETE_CHAT_GROUP,
+      groupId: groupId,
     });
   };
 };

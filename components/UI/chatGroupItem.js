@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableNativeFeedback } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  Button,
+} from "react-native";
 import Colors from "../../constants/Color";
 
 const ChatGroupItem = (props) => {
@@ -15,7 +21,18 @@ const ChatGroupItem = (props) => {
             {"    "}
             {props.people > 1 ? "Members" : "Member"}
           </Text>
-          {props.isAdmin ? <Text style={styles.admin}>Admin</Text> : null}
+          {props.isAdmin ? (
+            <View style={styles.adminCont}>
+              <Text style={styles.admin}>Admin</Text>
+              <View style={styles.adminBtn}>
+                <Button
+                  title="DELETE GROUP"
+                  color={"red"}
+                  onPress={props.deleteGroup}
+                />
+              </View>
+            </View>
+          ) : null}
         </View>
       </View>
     </TouchableNativeFeedback>
@@ -28,7 +45,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: "white",
     width: "80%",
-    height: 200,
+    height: 220,
     alignItems: "center",
     flexDirection: "column",
     margin: 30,
@@ -52,6 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
+    paddingTop: 20,
   },
   people: {
     fontSize: 15,
@@ -60,9 +78,21 @@ const styles = StyleSheet.create({
     fontSize: 23,
     color: Colors.primary,
   },
+  adminCont: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
+    height: 67,
+    alignItems: "center",
+    backgroundColor: "#eee",
+  },
   admin: {
     fontSize: 14,
     color: Colors.accent,
+    marginTop: 10,
+  },
+  adminBtn: {
+    height: 30,
   },
 });
 

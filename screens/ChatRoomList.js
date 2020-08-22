@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Button,
   FlatList,
+  Alert,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/UI/HeaderButton";
@@ -21,6 +22,18 @@ const ChatRoomListScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState();
+  const delteGroupHandler = (id) => {
+    Alert.alert("Are you sure?", "Do you really want to delete this Group?", [
+      { text: "No", style: "default" },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: () => {
+          dispatch(chatlistActions.deleteChatGroup(id));
+        },
+      },
+    ]);
+  };
   const loadGroups = useCallback(async () => {
     setIsRefreshing(true);
     setError(null);
@@ -84,6 +97,7 @@ const ChatRoomListScreen = (props) => {
         renderItem={(itemData) => (
           <ChatGroupItem
             title={itemData.item.groupName}
+            deleteGroup={() => delteGroupHandler(itemData.item.id)}
             people={itemData.item.users.length}
             isAdmin={itemData.item.isAdmin}
             onPress={() => {
