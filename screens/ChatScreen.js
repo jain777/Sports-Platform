@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { useSelector, useDispatch } from "react-redux";
 import * as chatActions from "../store/actions/chat";
@@ -9,6 +9,7 @@ import HeaderButton from "../components/UI/HeaderButton";
 
 const ChatScreen = (props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const paramsGroupId = props.navigation.getParam("groupId");
   const dispatch = useDispatch();
   const loadGroups = useCallback(async () => {
     setIsRefreshing(true);
@@ -37,9 +38,27 @@ const ChatScreen = (props) => {
   useEffect(() => {
     setMessages(transformedChats);
   }, [chats]);
+  const exitGroup = useCallback(async () => {
+    try {
+      Alert.alert("Are you sure?", "Do you really want to exit this Group?", [
+        { text: "No", style: "default" },
+        {
+          text: "Yes",
+          style: "destructive",
+          onPress: () => {
+            dispatch(chatlistActions.exitChatGroup(paramsGroupId));
+            props.navigation.goBack();
+          },
+        },
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [dispatch, paramsGroupId]);
   useEffect(() => {
     props.navigation.setParams({
       refresh: loadGroups,
+      exit: exitGroup,
     });
   }, []);
   const onSend = useCallback((messages = []) => {
@@ -77,6 +96,7 @@ const ChatScreen = (props) => {
 
 ChatScreen.navigationOptions = (navData) => {
   const refreshFn = navData.navigation.getParam("refresh");
+  const exitFn = navData.navigation.getParam("exit");
   return {
     headerTitle: navData.navigation.getParam("groupName"),
     headerRight: () => {
@@ -87,6 +107,13 @@ ChatScreen.navigationOptions = (navData) => {
             iconName={Platform.OS === "android" ? "md-refresh" : "ios-refresh"}
             onPress={() => {
               refreshFn();
+            }}
+          />
+          <Item
+            title="Exit"
+            iconName={Platform.OS === "android" ? "md-exit" : "ios-exit"}
+            onPress={() => {
+              exitFn();
             }}
           />
         </HeaderButtons>

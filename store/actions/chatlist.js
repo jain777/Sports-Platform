@@ -114,6 +114,7 @@ export const createChatGroup = (groupName) => {
     });
   };
 };
+
 export const joinChatGroup = (groupId) => {
   return async (dispatch, getState) => {
     //any async code you went!
@@ -182,6 +183,66 @@ export const joinChatGroup = (groupId) => {
         isAdmin: false,
       },
     });
+  };
+};
+
+export const exitChatGroup = (groupId) => {
+  return async (dispatch, getState) => {
+    //any async code you went!
+
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups.json?auth=${token}`
+    );
+    if (!response.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const respData = await response.json();
+    // console.log(respData);
+
+    let chatUsers = [];
+    let admin = null;
+    let groupName = null;
+    for (let key in respData) {
+      if (key === groupId) {
+        chatUsers = respData[key].users;
+        admin = respData[key].admin;
+        groupName = respData[key].groupName;
+      }
+    }
+    // console.log(chatUsers);
+    if (chatUsers.length === 1) {
+      dispatch(deleteChatGroup(groupId));
+      return;
+    }
+
+    const newUsers = chatUsers.filter((chatUser) => chatUser !== userId);
+    if (admin === userId) {
+      admin = newUsers[0];
+    }
+    // console.log(newUsers);
+    const newResponse = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/chatGroups/${groupId}.json?auth=${token}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          users: newUsers,
+          admin: admin,
+        }),
+      }
+    );
+
+    if (!newResponse.ok) {
+      throw new Error("Some Error Occured!");
+    }
+
+    const newRespData = await newResponse.json();
+    // console.log(newRespData);
   };
 };
 
