@@ -7,6 +7,8 @@ import ChatScreen from "../screens/ChatScreen";
 import ChatRoomList from "../screens/ChatRoomList";
 import NewChatScreen from "../screens/NewChatScreen";
 import UsernameScreen from "../screens/UsernameScreen";
+import NotificationListScreen from "../screens/NotificationListScreen";
+import NewNotificationScreen from "../screens/NewNotificationScreen";
 import React from "react";
 import { Platform, SafeAreaView, Button, View } from "react-native";
 import { logout } from "../store/actions/auth";
@@ -24,6 +26,8 @@ const SportsNavigator = createStackNavigator(
     ChatRoomList: ChatRoomList,
     ChatScreen: ChatScreen,
     NewChat: NewChatScreen,
+    NotificationList: NotificationListScreen,
+    NewNotification: NewNotificationScreen,
   },
   {
     defaultNavigationOptions: defaultNavOptions,
@@ -48,7 +52,6 @@ const DrawerNavigator = createDrawerNavigator(
               color={Colors.accent}
               onPress={() => {
                 dispatch(logout());
-                // props.navigation.navigate("Auth");
               }}
             />
           </SafeAreaView>

@@ -26,6 +26,12 @@ const ChatScreen = (props) => {
         (chatGroup) => chatGroup.id === props.navigation.getParam("groupId")
       )[0]["chats"]
   );
+  const admin = useSelector(
+    (state) =>
+      state.chatList.chatGroupList.filter(
+        (chatGroup) => chatGroup.id === props.navigation.getParam("groupId")
+      )[0]["admin"]
+  );
 
   let transformedChats = [];
 
@@ -38,6 +44,11 @@ const ChatScreen = (props) => {
   useEffect(() => {
     setMessages(transformedChats);
   }, [chats]);
+  useEffect(() => {
+    props.navigation.setParams({
+      isAdmin: userId === admin,
+    });
+  }, []);
   const exitGroup = useCallback(async () => {
     try {
       Alert.alert("Are you sure?", "Do you really want to exit this Group?", [
@@ -107,6 +118,16 @@ ChatScreen.navigationOptions = (navData) => {
             iconName={Platform.OS === "android" ? "md-refresh" : "ios-refresh"}
             onPress={() => {
               refreshFn();
+            }}
+          />
+          <Item
+            title="Notification"
+            iconName={Platform.OS === "android" ? "md-alert" : "ios-alert"}
+            onPress={() => {
+              navData.navigation.navigate("NotificationList", {
+                isAdmin: navData.navigation.getParam("isAdmin"),
+                groupId: navData.navigation.getParam("groupId"),
+              });
             }}
           />
           <Item
