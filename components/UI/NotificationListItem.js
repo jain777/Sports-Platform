@@ -6,6 +6,7 @@ import {
   TouchableNativeFeedback,
   Button,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import Colors from "../../constants/Color";
 import { Slider } from "react-native-elements";
@@ -32,6 +33,12 @@ const NotificationListItem = (props) => {
     props.onResponded();
   };
   const deleteNotiificationHandler = async () => {
+    const deleteNotif = async () => {
+      await dispatch(
+        notificationActions.deleteNotification(props.groupId, props.itemKey)
+      );
+      props.onResponded();
+    };
     Alert.alert(
       "Are you sure?",
       "Do you really want to delete this Notification?",
@@ -40,18 +47,10 @@ const NotificationListItem = (props) => {
         {
           text: "Yes",
           style: "destructive",
-          onPress: () => {
-            dispatch(
-              notificationActions.deleteNotification(
-                props.groupId,
-                props.itemKey
-              )
-            );
-          },
+          onPress: deleteNotif,
         },
       ]
     );
-    props.onResponded();
   };
 
   let optionsSlider = isLoading ? (
@@ -74,16 +73,29 @@ const NotificationListItem = (props) => {
         disabled={props.hasResponded}
         style={{ flex: 1 }}
       />
-      <Text style={{ color: Colors.primary, fontSize: 18 }}>
-        Your Response: {props.hasResponded ? props.response : sliderValue}
-      </Text>
+      {props.hasResponded ? (
+        <Text
+          style={{ color: Colors.primary, fontSize: 16, marginVertical: 5 }}
+        >
+          Your Response:{" "}
+          <Text style={styles.numberBox}>
+            {props.hasResponded ? props.response : sliderValue}
+          </Text>
+        </Text>
+      ) : (
+        <Text style={{ color: Colors.primary, marginVertical: 5 }}>
+          You Have Not Responded Yet.
+        </Text>
+      )}
       {props.hasResponded ? (
         <View>
-          <Text style={{ color: Colors.accent, fontSize: 18 }}>
-            Average Response: {props.avgResponse}
+          <Text style={{ color: Colors.primary, marginVertical: 5 }}>
+            Average Response:{" "}
+            <Text style={styles.numberBox}>{props.avgResponse}</Text>
           </Text>
-          <Text style={{ color: Colors.accent, fontSize: 18 }}>
-            Number Of Responses: {props.numberOfResponses}
+          <Text style={{ color: Colors.primary, marginVertical: 5 }}>
+            Number Of Responses:{" "}
+            <Text style={styles.numberBox}>{props.numberOfResponses}</Text>
           </Text>
         </View>
       ) : null}
@@ -160,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    bottom: 0,
+    bottom: 15,
     backgroundColor: "white",
   },
   adminBtn: {
@@ -172,6 +184,9 @@ const styles = StyleSheet.create({
     margin: 20,
     justifyContent: "space-around",
     alignItems: "center",
+  },
+  numberBox: {
+    color: Colors.accent,
   },
 });
 
