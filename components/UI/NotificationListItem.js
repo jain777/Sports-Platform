@@ -32,11 +32,25 @@ const NotificationListItem = (props) => {
     props.onResponded();
   };
   const deleteNotiificationHandler = async () => {
-    setIsLoading(true);
-    await dispatch(
-      notificationActions.deleteNotification(props.groupId, props.itemKey)
+    Alert.alert(
+      "Are you sure?",
+      "Do you really want to delete this Notification?",
+      [
+        { text: "No", style: "default" },
+        {
+          text: "Yes",
+          style: "destructive",
+          onPress: () => {
+            dispatch(
+              notificationActions.deleteNotification(
+                props.groupId,
+                props.itemKey
+              )
+            );
+          },
+        },
+      ]
     );
-    setIsLoading(false);
     props.onResponded();
   };
 
@@ -60,15 +74,19 @@ const NotificationListItem = (props) => {
         disabled={props.hasResponded}
         style={{ flex: 1 }}
       />
-      <Text style={{ color: Colors.primary }}>
+      <Text style={{ color: Colors.primary, fontSize: 18 }}>
         Your Response: {props.hasResponded ? props.response : sliderValue}
       </Text>
-      <Text style={{ color: Colors.accent }}>
-        Average Response: {props.avgResponse}
-      </Text>
-      <Text style={{ color: Colors.primary }}>
-        Number Of Responses: {props.numberOfResponses}
-      </Text>
+      {props.hasResponded ? (
+        <View>
+          <Text style={{ color: Colors.accent, fontSize: 18 }}>
+            Average Response: {props.avgResponse}
+          </Text>
+          <Text style={{ color: Colors.accent, fontSize: 18 }}>
+            Number Of Responses: {props.numberOfResponses}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 
