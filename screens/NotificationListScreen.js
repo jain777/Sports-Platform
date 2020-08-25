@@ -4,6 +4,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Button,
   Text,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +19,8 @@ const NotificationListScreen = (props) => {
     (state) =>
       state.notifications.notifications[props.navigation.getParam("groupId")]
   );
+  // console.log(groupNotifications);
+
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -53,6 +56,12 @@ const NotificationListScreen = (props) => {
       willFocusSub.remove();
     };
   }, [loadNotifications]);
+  const responseDoneHandler = useCallback(() => {
+    setIsLoading(true);
+    loadNotifications().then(() => {
+      setIsLoading(false);
+    });
+  }, [setIsLoading, loadNotifications]);
   if (error) {
     return (
       <View style={styles.centred}>
@@ -68,7 +77,7 @@ const NotificationListScreen = (props) => {
       </View>
     );
   }
-  if (!isLoading && !groupNotifications) {
+  if (!isLoading && groupNotifications && !groupNotifications[0]) {
     return (
       <View style={styles.centred}>
         <Text>No Notifications Found. Ask the Admin to Add Some!</Text>
@@ -85,8 +94,16 @@ const NotificationListScreen = (props) => {
       renderItem={(itemData) => (
         <NotificationListItem
           title={itemData.item.type}
+          itemKey={itemData.item.key}
+          detailKey={itemData.item.detailKey}
+          hasResponded={itemData.item.hasResponded}
+          numberOfResponses={itemData.item.numberOfResponses}
+          avgResponse={itemData.item.averageValue}
+          response={itemData.item.response}
+          groupId={props.navigation.getParam("groupId")}
           onPress={() => {}}
-          pollQn={itemData.item.notification.question}
+          onResponded={responseDoneHandler}
+          notification={itemData.item.notification}
           isAdmin={props.navigation.getParam("isAdmin")}
         />
       )}
@@ -97,7 +114,7 @@ const NotificationListScreen = (props) => {
 NotificationListScreen.navigationOptions = (navData) => {
   const isAdmin = navData.navigation.getParam("isAdmin");
   return {
-    headerTitle: "Notifications",
+    headerTitle: "Group Notifications",
     headerRight: () => {
       let dispHeader = null;
       if (isAdmin) {
