@@ -98,10 +98,15 @@ const NotificationListScreen = (props) => {
           detailKey={itemData.item.detailKey}
           hasResponded={itemData.item.hasResponded}
           numberOfResponses={itemData.item.numberOfResponses}
-          avgResponse={itemData.item.averageValue}
+          avgResponse={
+            itemData.item.type === "SLIDER POLL"
+              ? itemData.item.averageValue
+              : 0
+          }
+          option1={itemData.item.type === "POLL" ? itemData.item.option1 : 0}
+          option2={itemData.item.type === "POLL" ? itemData.item.option2 : 0}
           response={itemData.item.response}
           groupId={props.navigation.getParam("groupId")}
-          onPress={() => {}}
           onResponded={responseDoneHandler}
           notification={itemData.item.notification}
           isAdmin={props.navigation.getParam("isAdmin")}

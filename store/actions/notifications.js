@@ -25,6 +25,19 @@ export const createNotification = (groupId, type, notification) => {
     //any async code you went!
     const token = getState().auth.token;
     // const userId = getState().auth.userId;
+    let details = null;
+    if (type === "SLIDER POLL") {
+      details = {
+        numberOfResponses: 0,
+        averageValue: 0,
+      };
+    } else {
+      details = {
+        numberOfResponses: 0,
+        option1: 0,
+        option2: 0,
+      };
+    }
     const response = await fetch(
       `https://sports-app-28cb3.firebaseio.com/notifications/${groupId}.json?auth=${token}`,
       {
@@ -35,10 +48,7 @@ export const createNotification = (groupId, type, notification) => {
         body: JSON.stringify({
           type: type,
           notification: notification,
-          details: {
-            numberOfResponses: 0,
-            averageValue: 0,
-          },
+          details: details,
         }),
       }
     );
@@ -60,7 +70,7 @@ export const createNotification = (groupId, type, notification) => {
     });
   };
 };
-export const sendResponse = (groupId, key, resp, detailKey) => {
+export const sendResponseSlider = (groupId, key, resp, detailKey) => {
   return async (dispatch, getState) => {
     //any async code you went!
     // console.log(key);
@@ -107,6 +117,79 @@ export const sendResponse = (groupId, key, resp, detailKey) => {
     );
   };
 };
+export const sendResponsePoll = (groupId, key, resp, detailKey) => {
+  return async (dispatch, getState) => {
+    //any async code you went!
+    // console.log(key);
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/notifications/${groupId}/${key}/responses/${userId}.json?auth=${token}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          response: resp,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Something Went Wrong!!!");
+    }
+    const response2 = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/notifications/${groupId}/${key}/details.json?auth=${token}`
+    );
+    if (!response2.ok) {
+      throw new Error("Something Went Wrong!!!");
+    }
+    const respData2 = await response2.json();
+    // console.log(respData2);
+    let newOption1 = null;
+    let newOption2 = null;
+    if (resp === "option1") {
+      newOption1 = (
+        (((respData2.option1 * respData2.numberOfResponses) / 100 + 1) /
+          (respData2.numberOfResponses + 1)) *
+        100
+      ).toFixed(2);
+      newOption2 = (
+        ((respData2.option2 * respData2.numberOfResponses) /
+          100 /
+          (respData2.numberOfResponses + 1)) *
+        100
+      ).toFixed(2);
+    } else {
+      newOption2 = (
+        (((respData2.option2 * respData2.numberOfResponses) / 100 + 1) /
+          (respData2.numberOfResponses + 1)) *
+        100
+      ).toFixed(2);
+      newOption1 = (
+        ((respData2.option1 * respData2.numberOfResponses) /
+          100 /
+          (respData2.numberOfResponses + 1)) *
+        100
+      ).toFixed(2);
+    }
+
+    const response3 = await fetch(
+      `https://sports-app-28cb3.firebaseio.com/notifications/${groupId}/${key}/details.json?auth=${token}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          numberOfResponses: respData2.numberOfResponses + 1,
+          option1: newOption1,
+          option2: newOption2,
+        }),
+      }
+    );
+  };
+};
 
 export const setNotifications = (groupId) => {
   return async (dispatch, getState) => {
@@ -134,37 +217,69 @@ export const setNotifications = (groupId) => {
       // console.log(respData2);
       const details = respData[key].details;
       // console.log(details);
-      numberOfResponses = details.numberOfResponses;
-      averageValue = details.averageValue;
-
-      if (!respData2) {
-        obtainedNotifications.push({
-          key: key,
-          type: respData[key].type,
-          notification: respData[key].notification,
-          hasResponded: false,
-          response: 0,
-          averageValue: averageValue,
-          numberOfResponses: numberOfResponses,
-          detailKey: detailKey,
-        });
-      } else {
-        for (let key2 in respData2) {
+      const notifType = respData[key].type;
+      if (notifType === "SLIDER POLL") {
+        numberOfResponses = details.numberOfResponses;
+        averageValue = details.averageValue;
+        if (!respData2) {
           obtainedNotifications.push({
             key: key,
             type: respData[key].type,
             notification: respData[key].notification,
-            hasResponded: true,
-            response: respData2[key2].response,
+            hasResponded: false,
+            response: 0,
             averageValue: averageValue,
             numberOfResponses: numberOfResponses,
             detailKey: detailKey,
           });
+        } else {
+          for (let key2 in respData2) {
+            obtainedNotifications.push({
+              key: key,
+              type: respData[key].type,
+              notification: respData[key].notification,
+              hasResponded: true,
+              response: respData2[key2].response,
+              averageValue: averageValue,
+              numberOfResponses: numberOfResponses,
+              detailKey: detailKey,
+            });
+          }
+        }
+      } else {
+        numberOfResponses = details.numberOfResponses;
+        option1 = details.option1;
+        option2 = details.option2;
+        if (!respData2) {
+          obtainedNotifications.push({
+            key: key,
+            type: respData[key].type,
+            notification: respData[key].notification,
+            hasResponded: false,
+            response: 0,
+            numberOfResponses: numberOfResponses,
+            option1: option1,
+            option2: option2,
+            detailKey: detailKey,
+          });
+        } else {
+          for (let key2 in respData2) {
+            obtainedNotifications.push({
+              key: key,
+              type: respData[key].type,
+              notification: respData[key].notification,
+              hasResponded: true,
+              response: respData2[key2].response,
+              option1: option1,
+              option2: option2,
+              numberOfResponses: numberOfResponses,
+              detailKey: detailKey,
+            });
+          }
         }
       }
     }
     // console.log(obtainedNotifications);
-    
     dispatch({
       type: SET_NOTIFICATIONS,
       groupId: groupId,
