@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 const SliderPollInput = (props) => {
   const [question, setQuestion] = useState("");
   const [minimumValue, setMinimumValue] = useState(0);
-  const [maximumValue, setMaximumValue] = useState(0);
+  const [maximumValue, setMaximumValue] = useState(1);
   const [questionValidity, setQuestionValidity] = useState(false);
   const { onInputChange } = props;
   useEffect(() => {
@@ -50,7 +50,7 @@ const SliderPollInput = (props) => {
         keyboardType="decimal-pad"
         returnKeyType="next"
         onInputChange={minValChangedHandler}
-        initialValue={""}
+        initialValue={"-9.9"}
         initiallyValid={true}
       />
       <Input
@@ -60,7 +60,7 @@ const SliderPollInput = (props) => {
         keyboardType="decimal-pad"
         returnKeyType="next"
         onInputChange={maxValChangedHandler}
-        initialValue={""}
+        initialValue={"9.9"}
         initiallyValid={true}
       />
     </View>

@@ -84,7 +84,11 @@ const NotificationListItem = (props) => {
         </Text>
       ) : (
         <Text style={{ color: Colors.primary, marginVertical: 5 }}>
-          You Have Not Responded Yet.
+          {sliderValue === props.notification
+            ? props.notification.minimumValue
+            : 0
+            ? "You Have Not Responded Yet."
+            : "Your Response: " + sliderValue}
         </Text>
       )}
       {props.hasResponded ? (

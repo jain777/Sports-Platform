@@ -5,10 +5,10 @@ import {
   Switch,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
   Button,
   ScrollView,
   Text,
-  KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import Colors from "../constants/Color";
@@ -38,7 +38,7 @@ const newNotificationScreen = (props) => {
   const [option1, setOption1] = useState("");
   const [option2, setOption2] = useState("");
   const [minimumValue, setMinimumValue] = useState(0);
-  const [maximumValue, setMaximumValue] = useState(0);
+  const [maximumValue, setMaximumValue] = useState(1);
   const [questionValidity, setQuestionValidity] = useState(false);
   const inputChangedHandler = useCallback(
     (question, questionValidity, option1, option2) => {
@@ -60,7 +60,12 @@ const newNotificationScreen = (props) => {
   );
   const { navigation } = props;
   const submitHandler = useCallback(async () => {
-    if (!questionValidity) {
+    if (
+      !questionValidity ||
+      question === "" ||
+      maximumValue === "9.9" ||
+      minimumValue === "-9.9"
+    ) {
       Alert.alert("Wrong input!", "Please check the errors in the form.", [
         { text: "Okay" },
       ]);
@@ -81,7 +86,7 @@ const newNotificationScreen = (props) => {
       await dispatch(
         notificationsActions.createNotification(groupId, type, notification)
       );
-      props.navigation.navigate('NotificationList');
+      props.navigation.navigate("NotificationList");
     } catch (err) {
       setError(err.message);
     }
@@ -132,31 +137,35 @@ const newNotificationScreen = (props) => {
     );
   }
   return (
-    <View style={styles.screen}>
-      <Text style={styles.notifType}>Type of Notification?</Text>
-      <View style={styles.switchCont}>
-        <FilterSwitch
-          label={"Poll"}
-          state={isPoll}
-          onChange={pollChangedHandler}
-        />
-        <FilterSwitch
-          label={"Silder Poll"}
-          state={isSliderPoll}
-          onChange={sliderPollChangedHandler}
-        />
-      </View>
-      <Text style={styles.notifType}>Notification Details: </Text>
-      <View style={styles.displayCont}>{displayedItem}</View>
-      <View style={styles.adminBtn}>
-        <Button
-          title={`SUBMIT`}
-          color={"green"}
-          onPress={submitHandler}
-          disabled={!isPoll && !isSliderPoll}
-        />
-      </View>
-    </View>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.screen}>
+          <Text style={styles.notifType}>Type of Notification?</Text>
+          <View style={styles.switchCont}>
+            <FilterSwitch
+              label={"Poll"}
+              state={isPoll}
+              onChange={pollChangedHandler}
+            />
+            <FilterSwitch
+              label={"Silder Poll"}
+              state={isSliderPoll}
+              onChange={sliderPollChangedHandler}
+            />
+          </View>
+          <Text style={styles.notifType}>Notification Details: </Text>
+          <View style={styles.displayCont}>{displayedItem}</View>
+          <View style={styles.adminBtn}>
+            <Button
+              title={`SUBMIT`}
+              color={"green"}
+              onPress={submitHandler}
+              disabled={!isPoll && !isSliderPoll}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
   notifType: {
     width: "70%",
     padding: 15,
-    marginVertical: 20,
+    marginVertical: 10,
     backgroundColor: "#164b6b",
     color: "white",
     fontSize: 19,
@@ -200,7 +209,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   adminBtn: {
-    height: 30,
+    height: 40,
   },
   centred: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
