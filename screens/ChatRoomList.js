@@ -84,7 +84,6 @@ const ChatRoomListScreen = (props) => {
       <View style={styles.idContainer}>
         <Text style={styles.idText}>
           WELCOME{"   "}
-          {/* -MFEslyJyG_TeSPj-Jqe */}
           <Text style={styles.id}>{username}</Text>
         </Text>
       </View>
